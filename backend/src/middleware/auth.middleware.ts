@@ -25,11 +25,11 @@ export const authMiddleware = (
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as {
       id: number;
-      isAdmin: boolean;
+      email: string;
     };
     req.user = {
       id: decoded.id,
-      is_admin: decoded.isAdmin,
+      email: decoded.email,
     };
     next();
   } catch (error) {

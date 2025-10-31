@@ -1,4 +1,3 @@
-import cookieParser from "cookie-parser";
 import express, { type Request, type Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -6,6 +5,9 @@ import { setupSwagger } from "./swagger";
 
 // Routes
 import authRoutes from "./routes/auth.routes";
+import eventRoutes from "./routes/event.routes";
+import requestRoutes from "./routes/request.routes";
+
 import { globalException } from "./exception/global-exception-handler";
 
 dotenv.config();
@@ -18,13 +20,14 @@ app.use(
   })
 );
 app.use(express.json());
-app.use(cookieParser());
 
 // Swagger
 setupSwagger(app);
 
 //Routes
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/requests", requestRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   console.log("ping done....");
