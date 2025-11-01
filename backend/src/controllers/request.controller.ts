@@ -24,10 +24,70 @@ export const createRequest = async (req: AuthenticatedRequest, res: any) => {
 };
 
 export const getRequests = async (req: AuthenticatedRequest, res: any) => {
-  const requests = await Request.find({ to: req.user?.id });
-  return res.json({
+  const userId = req.user?.id;
+  if (!userId) {
+    throw new CustomException("Unauthorized", 401);
+  }
+
+  const { status } = req.query;
+
+  const filter: any = { to: userId };
+
+  if (status) {
+    const statuses = (status as string).split(",").map((s) => s.trim());
+    filter.status = { $in: statuses };
+  }
+
+  const requests = await Request.find(filter)
+    .populate({
+      path: "from",
+      select: "name email",
+    })
+    .populate({
+      path: "event",
+      select: "title description startTime endTime status",
+    });
+
+  return res.status(201).json({
     success: true,
-    data: requests,
+    message: "Request fetched successfully",
+    request: requests,
+  });
+};
+
+export const getMyRequests = async (req: AuthenticatedRequest, res: any) => {
+  const userId = req.user?.id;
+  if (!userId) {
+    throw new CustomException("Unauthorized", 401);
+  }
+
+  const { status } = req.query;
+
+  const filter: any = { from: userId };
+
+  if (status) {
+    const statuses = (status as string).split(",").map((s) => s.trim());
+    filter.status = { $in: statuses };
+  }
+
+  const requests = await Request.find(filter)
+    .populate({
+      path: "from",
+      select: "name email",
+    })
+    .populate({
+      path: "to",
+      select: "name email",
+    })
+    .populate({
+      path: "event",
+      select: "title description startTime endTime status",
+    });
+
+  return res.status(201).json({
+    success: true,
+    message: "Request fetched successfully",
+    request: requests,
   });
 };
 
@@ -46,7 +106,7 @@ export const approveRequest = async (req: AuthenticatedRequest, res: any) => {
     throw new CustomException("Event not found", 404);
   }
 
-  event.createdBy = request.to;
+  event.createdBy = request.from;
   event.status = "busy";
   await event.save();
   request.status = "accepted";

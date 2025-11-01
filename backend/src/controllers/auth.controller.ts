@@ -12,7 +12,7 @@ export const signup = async (req: Request, res: Response) => {
     throw new CustomException("All fields are required", 400);
   }
 
-  const existingUser = await User.find({ email });
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw new CustomException("User already exists", 400);
   }
@@ -45,14 +45,16 @@ export const login = async (req: Request, res: Response) => {
   }
   const accessToken = generateAccessToken(user, "3d");
 
-  const { password: _pwd, ...userWithoutPassword } = user as any;
+  const userWithoutPassword = user.toObject();
+  userWithoutPassword.password = "";
+  console.log("User logged in:", userWithoutPassword, user);
 
   return res.json({
     success: true,
     message: "Login successful",
     accessToken,
     user: {
-      id: userWithoutPassword.id,
+      id: userWithoutPassword._id,
       name: userWithoutPassword.name,
       email: userWithoutPassword.email,
     },

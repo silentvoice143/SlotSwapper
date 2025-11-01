@@ -1,8 +1,9 @@
-// socket.ts
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
-export let io: Server; // export reference
+export let io: Server;
 
 export const initSocket = (server: any) => {
   io = new Server(server, {
@@ -14,10 +15,11 @@ export const initSocket = (server: any) => {
   });
 
   io.on("connection", (socket) => {
-    console.log("🔌 New client connected:", socket.id);
+    console.log("🔌 Client connected:", socket.id);
 
     const token = socket.handshake.auth?.token || null;
     const userId = socket.handshake.auth?.userId || null;
+    console.log("🔑 Auth data:", { token, userId }, process.env.JWT_SECRET);
 
     if (token) {
       try {
@@ -25,39 +27,16 @@ export const initSocket = (server: any) => {
           token,
           process.env.JWT_SECRET || "secret"
         );
+        console.log("✅ Token verified:", decoded);
         socket.data.userId = decoded.id || userId;
         socket.join(`user:${socket.data.userId}`);
-        console.log(`👤 Authenticated user connected: ${socket.data.userId}`);
-      } catch {
-        console.log("⚠️ Invalid token, treating as guest");
+        console.log(`👤 Authenticated user: ${socket.data.userId}`);
+      } catch (err) {
+        console.log("⚠️ Invalid token — connecting as guest", err);
       }
-    } else {
-      console.log("👥 Guest connected");
     }
 
-    socket.emit("welcome", "✅ Connected to Study Ease WebSocket!");
-
-    socket.on("chatMessage", (msg) => {
-      console.log("📩 Public message:", msg);
-      socket.broadcast.emit("chatMessage", msg);
-    });
-
-    socket.on("privateMessage", ({ toUserId, message }) => {
-      if (!socket.data.userId) {
-        return socket.emit(
-          "error",
-          "❌ You must be logged in to send private messages"
-        );
-      }
-
-      console.log(
-        `📨 Private message from ${socket.data.userId} → ${toUserId}: ${message}`
-      );
-      io.to(`user:${toUserId}`).emit("privateMessage", {
-        from: socket.data.userId,
-        message,
-      });
-    });
+    socket.emit("welcome", "✅ Connected to StudyEase WebSocket!");
 
     socket.on("disconnect", () => {
       console.log("❌ Client disconnected:", socket.id);
@@ -65,6 +44,5 @@ export const initSocket = (server: any) => {
   });
 
   console.log("⚙️ Socket.IO initialized");
-
   return io;
 };

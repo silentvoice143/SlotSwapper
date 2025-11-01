@@ -4,6 +4,7 @@ import {
   createEvent,
   deleteEvent,
   getEvents,
+  getSwappableEvents,
   updateStatus,
 } from "../controllers/event.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
@@ -12,6 +13,7 @@ const router = express.Router();
 
 router.post("/", authMiddleware, catchAsync(createEvent));
 router.get("/", authMiddleware, catchAsync(getEvents));
+router.get("/swappable", authMiddleware, catchAsync(getSwappableEvents));
 router.delete("/:eventId", authMiddleware, catchAsync(deleteEvent));
 router.patch(
   "/:eventId/status/:status",

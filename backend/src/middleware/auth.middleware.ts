@@ -1,7 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import { CustomException } from "../exception/custom-exception";
+dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
+const JWT_SECRET = process.env.JWT_SECRET || "secret";
 
 export interface AuthRequest extends Request {
   user?: any;
@@ -14,12 +17,14 @@ export const authMiddleware = (
   next: NextFunction
 ) => {
   // ✅ Read token from httpOnly cookie
-  const token = req.cookies?.accessToken;
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    throw new CustomException("No token provided", 401);
+  }
 
+  const token = authHeader.split(" ")[1];
   if (!token) {
-    return res
-      .status(401)
-      .json({ success: false, message: "No token provided" });
+    throw new CustomException("No token provided", 401);
   }
 
   try {
