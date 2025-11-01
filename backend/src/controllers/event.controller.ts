@@ -56,7 +56,7 @@ export const getEvents = async (req: AuthenticatedRequest, res: Response) => {
       $gte: start,
       $lte: end,
     },
-  });
+  }).populate({ path: "createdBy", select: "name email" });
 
   return res.json({
     success: true,
@@ -134,11 +134,9 @@ export const updateEvent = async (req: AuthenticatedRequest, res: Response) => {
   event.status = status ? (status as "swappable" | "busy") : event.status;
   event.save();
 
-  return res
-    .status(200)
-    .json({
-      message: "Event status updated successfully",
-      event,
-      success: true,
-    });
+  return res.status(200).json({
+    message: "Event status updated successfully",
+    event,
+    success: true,
+  });
 };
