@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Plus,
-  Calendar,
-  Clock,
-  User,
-  ArrowRightLeft,
-  Loader,
-  Loader2,
-} from "lucide-react";
+import { Plus, Calendar, ArrowRightLeft, Loader2 } from "lucide-react";
 import { Button } from "@/libs/components/ui/button";
 
 import EventCard from "../components/myCalendar/eventCard";
@@ -23,7 +15,7 @@ interface Event {
   startTime: string;
   endTime: string;
   status: "busy" | "swappable";
-  createdBy: { name: string; id: string };
+  createdBy: { name: string; _id: string };
 }
 
 function MyCalendar() {
@@ -32,7 +24,6 @@ function MyCalendar() {
   const [isSaving, setIsSaving] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const getEvents = async () => {
     try {
@@ -142,9 +133,7 @@ function MyCalendar() {
             <EventCard
               key={`${event?._id}-${index}`}
               event={event as Event}
-              onEditClick={() => {
-                setIsEditDialogOpen(true);
-              }}
+              onEditClick={() => {}}
               onStatusChange={(status) =>
                 handleStatusChange(event?._id, status)
               }

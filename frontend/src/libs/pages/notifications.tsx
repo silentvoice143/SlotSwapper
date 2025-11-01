@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Bell, Trash2, CheckCircle, Circle } from "lucide-react";
 import { Button } from "@/libs/components/ui/button";
 import { Card, CardContent } from "@/libs/components/ui/card";

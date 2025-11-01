@@ -9,7 +9,7 @@ import {
 import { Input } from "@/libs/components/ui/input";
 import { Button } from "@/libs/components/ui/button";
 import { Label } from "@/libs/components/ui/label";
-import { Alert, AlertDescription } from "@/libs/components/ui/alert";
+
 import {
   EyeClosedIcon,
   EyeIcon,
@@ -36,6 +36,7 @@ function Register() {
       setLoading(true);
       e.preventDefault();
       setError("");
+      console.log(error);
 
       if (!email || !password) {
         setError("Please fill in all fields");

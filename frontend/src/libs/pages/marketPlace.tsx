@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getEventsByDate, getSwappableEvents } from "../api/events";
+import { getSwappableEvents } from "../api/events";
 import EventCard from "../components/myCalendar/eventCard";
 import { Calendar, Loader2 } from "lucide-react";
 import { postRequest } from "../api/requests";

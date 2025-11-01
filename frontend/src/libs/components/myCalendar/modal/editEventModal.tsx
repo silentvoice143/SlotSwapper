@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Plus } from "lucide-react";
 import { Button } from "@/libs/components/ui/button";
 import { Input } from "@/libs/components/ui/input";
 import { Label } from "@/libs/components/ui/label";
@@ -49,7 +48,6 @@ const EditEventModal: React.FC<CreateEventModalProps> = ({
   onSubmit,
   initialDate,
   trigger,
-  eventData,
 }) => {
   const [formData, setFormData] = useState({
     title: "",
@@ -150,26 +148,6 @@ const EditEventModal: React.FC<CreateEventModalProps> = ({
     setErrors({ title: "", startTime: "", endTime: "" });
     onOpenChange(false);
   };
-
-  // Generate time options (every 15 minutes)
-  const generateTimeOptions = () => {
-    const options = [];
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 15) {
-        const timeString = `${String(hour).padStart(2, "0")}:${String(
-          minute
-        ).padStart(2, "0")}`;
-        const displayTime = format(
-          new Date(`2000-01-01T${timeString}`),
-          "h:mm a"
-        );
-        options.push({ value: timeString, label: displayTime });
-      }
-    }
-    return options;
-  };
-
-  const timeOptions = generateTimeOptions();
 
   return (
     <ReusableModal
