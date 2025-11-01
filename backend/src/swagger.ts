@@ -14,7 +14,7 @@ const options: swaggerJsdoc.Options = {
       {
         url:
           process.env.NODE_ENV === "production"
-            ? "https://study-ease-nodejs-backend.onrender.com"
+            ? "https://slotswapper-backend-ol2r.onrender.com"
             : "http://localhost:5000",
       },
     ],

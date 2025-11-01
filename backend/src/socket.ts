@@ -36,7 +36,7 @@ export const initSocket = (server: any) => {
       }
     }
 
-    socket.emit("welcome", "✅ Connected to StudyEase WebSocket!");
+    socket.emit("welcome", "✅ Connected to SlotSwapper WebSocket!");
 
     socket.on("disconnect", () => {
       console.log("❌ Client disconnected:", socket.id);

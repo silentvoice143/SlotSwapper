@@ -18,7 +18,7 @@ const startServer = async () => {
       const BASE_URL =
         process.env.NODE_ENV === "production"
           ? process.env.BACKEND_URL ||
-            "https://study-ease-nodejs-backend.onrender.com"
+            "https://slotswapper-backend-ol2r.onrender.com"
           : `http://localhost:${PORT}`;
 
       console.log(`🚀 Server running at ${BASE_URL}`);
