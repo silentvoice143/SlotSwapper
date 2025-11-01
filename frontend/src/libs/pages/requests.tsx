@@ -150,7 +150,7 @@ function Requests() {
 
         {/* Responded Requests */}
         {!isLoading && respondedRequests.length > 0 && (
-          <div>
+          <div className="mb-12">
             <h2 className="text-xl font-bold text-gray-900 mb-6">
               Previous Requests
             </h2>
@@ -162,7 +162,6 @@ function Requests() {
         {!isLoading && requests.length > 0 && (
           <div className="mb-12">
             <div className="flex items-center gap-2 mb-6">
-              <Clock size={20} className="text-purple-600" />
               <h2 className="text-xl font-bold text-gray-900">My Requests</h2>
             </div>
             <RequestTable
