@@ -5,22 +5,49 @@ import { Event } from "../models/event.model";
 import { sendNotification } from "../utils/send-notification";
 
 export const createRequest = async (req: AuthenticatedRequest, res: any) => {
-  const { from, to, event } = req.body;
-  if (!from || !to || !event) {
-    throw new CustomException("All fields are required", 400);
+  try {
+    const { from, to, event } = req.body;
+
+    if (!from || !to || !event) {
+      throw new CustomException("All fields are required", 400);
+    }
+
+    const existingRequest = await Request.findOne({
+      from,
+      to,
+      event,
+      status: "pending",
+    });
+
+    if (existingRequest) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "A pending request already exists for this event between these users.",
+      });
+    }
+
+    const newRequest = new Request({ from, to, event });
+    await newRequest.save();
+
+    await sendNotification(
+      to.toString(),
+      "New Request Received",
+      "You have a new request for an event."
+    );
+
+    return res.status(201).json({
+      success: true,
+      message: "Request created successfully",
+      request: newRequest,
+    });
+  } catch (error: any) {
+    console.error("Error creating request:", error);
+    return res.status(error.status || 500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
   }
-  const newRequest = new Request({ from, to, event });
-  await newRequest.save();
-  await sendNotification(
-    to.toString(),
-    "New Request Received",
-    "You have a new request for an event."
-  );
-  return res.status(201).json({
-    success: true,
-    message: "Request created successfully",
-    request: newRequest,
-  });
 };
 
 export const getRequests = async (req: AuthenticatedRequest, res: any) => {
