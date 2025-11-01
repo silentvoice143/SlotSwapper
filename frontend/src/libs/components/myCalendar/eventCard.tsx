@@ -20,6 +20,7 @@ import {
 import { formatDateTime } from "@/libs/utils/dateFormatter";
 import { Button } from "../ui/button";
 import { useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 interface EventCardProps {
   event: {
@@ -77,54 +78,60 @@ function EventCard({
               {event.status}
             </Badge>
             {showOptions && (
-              <div className="relative">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0"
-                  onClick={() => setMenuOpen(!menuOpen)}
+              <Popover open={menuOpen} onOpenChange={setMenuOpen}>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <MoreVertical className="w-4 h-4 text-gray-600" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="end"
+                  className="p-0 w-48 border border-gray-200 rounded-lg shadow-lg"
                 >
-                  <MoreVertical className="w-4 h-4 text-gray-600" />
-                </Button>
-                {menuOpen && (
-                  <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-48">
-                    <button
-                      onClick={onEditClick}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 border-b border-gray-100"
-                    >
-                      <Edit className="w-4 h-4" />
-                      Edit Event
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleStatusChange(
-                          event.status === "busy" ? "swappable" : "busy"
-                        )
-                      }
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 border-b border-gray-100"
-                    >
-                      {event.status === "busy" ? (
-                        <>
-                          <Shuffle className="w-4 h-4" />
-                          Mark as Swappable
-                        </>
-                      ) : (
-                        <>
-                          <Lock className="w-4 h-4" />
-                          Mark as Busy
-                        </>
-                      )}
-                    </button>
-                    <button
-                      onClick={onDelete}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 text-red-600 flex items-center gap-2"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      Delete Event
-                    </button>
-                  </div>
-                )}
-              </div>
+                  <button
+                    onClick={() => {
+                      onEditClick?.();
+                      setMenuOpen(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 border-b border-gray-100"
+                  >
+                    <Edit className="w-4 h-4" />
+                    Edit Event
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      handleStatusChange(
+                        event.status === "busy" ? "swappable" : "busy"
+                      )
+                    }
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 border-b border-gray-100"
+                  >
+                    {event.status === "busy" ? (
+                      <>
+                        <Shuffle className="w-4 h-4" />
+                        Mark as Swappable
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="w-4 h-4" />
+                        Mark as Busy
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      onDelete?.();
+                      setMenuOpen(false);
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-red-50 text-red-600 flex items-center gap-2"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete Event
+                  </button>
+                </PopoverContent>
+              </Popover>
             )}
           </div>
         </div>

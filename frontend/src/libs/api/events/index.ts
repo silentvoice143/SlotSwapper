@@ -25,3 +25,16 @@ export const changeEventStatus = async (
   );
   return res.data;
 };
+
+export const editEvent = async (
+  eventId: string,
+  payload: any
+): Promise<any> => {
+  const res = await api.put(`${API_ENDPOINTS.EVENT.BASE}/${eventId}`, payload);
+  return res.data;
+};
+
+export const deleteEvent = async (eventId: string): Promise<any> => {
+  const res = await api.delete(`${API_ENDPOINTS.EVENT.BASE}/${eventId}`);
+  return res.data;
+};

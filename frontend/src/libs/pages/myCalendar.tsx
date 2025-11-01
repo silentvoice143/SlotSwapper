@@ -5,8 +5,15 @@ import { Button } from "@/libs/components/ui/button";
 import EventCard from "../components/myCalendar/eventCard";
 import HorizontalCalendar from "../components/myCalendar/horizontalCalendar";
 import CreateEventModal from "../components/myCalendar/modal/createEventModal";
-import { changeEventStatus, getEventsByDate, postEvent } from "../api/events";
+import {
+  changeEventStatus,
+  deleteEvent,
+  editEvent,
+  getEventsByDate,
+  postEvent,
+} from "../api/events";
 import { toast } from "sonner";
+import EditEventModal from "../components/myCalendar/modal/editEventModal";
 
 interface Event {
   _id: string;
@@ -22,8 +29,11 @@ function MyCalendar() {
   const [events, setEvents] = useState<Event[]>([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [eventToBeEdited, setEventToBeEdited] = useState<Event | null>(null);
 
   const getEvents = async () => {
     try {
@@ -55,7 +65,6 @@ function MyCalendar() {
     try {
       setIsSaving(true);
       const data = await changeEventStatus(eventId, status);
-      console.log(data, "----updated");
 
       if (data.success) {
         toast.success("Event updated successfully");
@@ -72,6 +81,49 @@ function MyCalendar() {
       toast.error("Failed to update event");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleEditDetail = async (eventId: string, dataToChange: any) => {
+    try {
+      setIsSaving(true);
+      const data = await editEvent(eventId, dataToChange);
+
+      if (data.success) {
+        toast.success("Event updated successfully");
+        console.log(data.event);
+        // Update the event in state
+        setEvents((prevEvents: any) =>
+          prevEvents.map((event: Event) =>
+            event._id === eventId ? { ...event, ...data.event } : event
+          )
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update event");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDeleteEvent = async (eventId: string) => {
+    const toastId = toast.loading("Deleting event...");
+
+    try {
+      const data = await deleteEvent(eventId);
+
+      if (data.success) {
+        toast.success("Event deleted successfully", { id: toastId });
+
+        setEvents((prev) => prev.filter((e) => e._id !== eventId));
+      } else {
+        toast.error("Failed to delete event", { id: toastId });
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Something went wrong while deleting", { id: toastId });
+    } finally {
     }
   };
 
@@ -104,6 +156,16 @@ function MyCalendar() {
             onSubmit={createEvent}
             isSaving={isSaving}
           />
+          <EditEventModal
+            trigger={null}
+            open={isEditDialogOpen}
+            onOpenChange={setIsEditDialogOpen}
+            onSubmit={(data) => {
+              handleEditDetail(eventToBeEdited?._id as string, data);
+            }}
+            isSaving={isSaving}
+            eventData={eventToBeEdited as Event}
+          />
         </div>
 
         <div className="mb-4">
@@ -133,10 +195,17 @@ function MyCalendar() {
             <EventCard
               key={`${event?._id}-${index}`}
               event={event as Event}
-              onEditClick={() => {}}
-              onStatusChange={(status) =>
-                handleStatusChange(event?._id, status)
-              }
+              onEditClick={() => {
+                console.log("edit set ", event);
+                setEventToBeEdited(event);
+                setIsEditDialogOpen(true);
+              }}
+              onStatusChange={(status) => {
+                handleStatusChange(event?._id, status);
+              }}
+              onDelete={() => {
+                handleDeleteEvent(event._id);
+              }}
             />
           ))}
         </div>

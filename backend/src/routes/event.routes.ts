@@ -5,6 +5,7 @@ import {
   deleteEvent,
   getEvents,
   getSwappableEvents,
+  updateEvent,
   updateStatus,
 } from "../controllers/event.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
@@ -20,7 +21,7 @@ router.patch(
   authMiddleware,
   catchAsync(updateStatus)
 );
-router.put("/:eventId", authMiddleware, catchAsync(updateStatus));
+router.put("/:eventId", authMiddleware, catchAsync(updateEvent));
 
 /**
  * @swagger

@@ -16,7 +16,7 @@ import {
   PopoverTrigger,
 } from "@/libs/components/ui/popover";
 import { Calendar } from "@/libs/components/ui/calendar";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/libs/utils/utils";
 import ReusableModal from "../../common/modal";
@@ -40,6 +40,7 @@ interface CreateEventModalProps {
     endTime: string;
     status: "busy" | "swappable";
   };
+  isSaving?: boolean;
 }
 
 const EditEventModal: React.FC<CreateEventModalProps> = ({
@@ -48,6 +49,8 @@ const EditEventModal: React.FC<CreateEventModalProps> = ({
   onSubmit,
   initialDate,
   trigger,
+  isSaving,
+  eventData,
 }) => {
   const [formData, setFormData] = useState({
     title: "",
@@ -149,6 +152,32 @@ const EditEventModal: React.FC<CreateEventModalProps> = ({
     onOpenChange(false);
   };
 
+  useEffect(() => {
+    if (open && eventData) {
+      const startDate = parseISO(eventData.startTime);
+      const endDate = parseISO(eventData.endTime);
+
+      setFormData({
+        title: eventData.title,
+        description: eventData.description,
+        date: startDate,
+        startTime: format(startDate, "HH:mm"),
+        endTime: format(endDate, "HH:mm"),
+        status: eventData.status,
+      });
+    } else if (open && !eventData && initialDate) {
+      // reset if creating new
+      setFormData({
+        title: "",
+        description: "",
+        date: initialDate,
+        startTime: "",
+        endTime: "",
+        status: "busy",
+      });
+    }
+  }, [eventData, open, initialDate]);
+
   return (
     <ReusableModal
       trigger={trigger}
@@ -157,17 +186,18 @@ const EditEventModal: React.FC<CreateEventModalProps> = ({
       title="Create New Event"
       description="Add a new event to your schedule. Fill in the details below."
       footerContent={
-        <>
-          <Button variant="outline" onClick={handleCancel}>
+        <div className="flex gap-4">
+          <Button className="flex-1" variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
           <Button
+            disabled={isSaving}
             onClick={handleSubmit}
-            className="bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            className="flex-1 bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
           >
-            Create Event
+            {isSaving ? "Updating..." : "Update Event"}
           </Button>
-        </>
+        </div>
       }
     >
       <div className="grid gap-4 py-4">
@@ -251,10 +281,11 @@ const EditEventModal: React.FC<CreateEventModalProps> = ({
               onChange={(e) =>
                 setFormData({ ...formData, startTime: e.target.value })
               }
+              value={formData.startTime}
               type="time"
               id="time-picker"
-              step="1"
-              defaultValue="10:30:00"
+              step={60}
+              // defaultValue="10:30:00"
               className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
             />
             {errors.startTime && (
@@ -269,16 +300,17 @@ const EditEventModal: React.FC<CreateEventModalProps> = ({
             </Label>
             <Input
               onChange={(e) =>
-                setFormData({ ...formData, startTime: e.target.value })
+                setFormData({ ...formData, endTime: e.target.value })
               }
+              value={formData.endTime}
               type="time"
               id="time-picker"
-              step="1"
-              defaultValue="10:30:00"
+              step={60}
+              // defaultValue="10:30:00"
               className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
             />
             {errors.startTime && (
-              <p className="text-sm text-red-500">{errors.startTime}</p>
+              <p className="text-sm text-red-500">{errors.endTime}</p>
             )}
           </div>
         </div>

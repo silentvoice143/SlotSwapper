@@ -121,7 +121,8 @@ export const updateStatus = async (
 };
 
 export const updateEvent = async (req: AuthenticatedRequest, res: Response) => {
-  const { eventId, status } = req.params;
+  const { eventId } = req.params;
+  const { status } = req.body;
   const event = await Event.findByIdAndUpdate(
     { _id: eventId, createdBy: req.user?.id },
     req.body,
@@ -130,9 +131,14 @@ export const updateEvent = async (req: AuthenticatedRequest, res: Response) => {
   if (!event) {
     throw new CustomException("Event not found", 404);
   }
-  event.status = status as "swappable" | "busy";
+  event.status = status ? (status as "swappable" | "busy") : event.status;
   event.save();
+
   return res
     .status(200)
-    .json({ message: "Event status updated successfully", event });
+    .json({
+      message: "Event status updated successfully",
+      event,
+      success: true,
+    });
 };
