@@ -20,7 +20,7 @@ import { format, set } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/libs/utils/utils";
 import ReusableModal from "../../common/modal";
-import { toUtcIso } from "@/libs/utils/dateFormatter";
+import { getRoundedTime, toUtcIso } from "@/libs/utils/dateFormatter";
 
 interface CreateEventModalProps {
   open: boolean;
@@ -49,8 +49,8 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
     title: "",
     description: "",
     date: initialDate || new Date(),
-    startTime: "",
-    endTime: "",
+    startTime: getRoundedTime(),
+    endTime: getRoundedTime(60),
     status: "busy" as "busy" | "swappable",
   });
 
@@ -60,15 +60,17 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
     endTime: "",
   });
 
-  // Update date when initialDate changes
   useEffect(() => {
-    if (initialDate) {
-      setFormData((prev) => ({ ...prev, date: initialDate }));
+    if (open) {
+      setFormData((prev) => ({
+        ...prev,
+        startTime: getRoundedTime(),
+        endTime: getRoundedTime(60),
+      }));
     }
-  }, [initialDate]);
+  }, [open]);
 
   const validateForm = () => {
-    console.log(formData, "---formdata");
     const newErrors = {
       title: "",
       startTime: "",
@@ -260,10 +262,10 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
               onChange={(e) =>
                 setFormData({ ...formData, startTime: e.target.value })
               }
+              value={formData.startTime}
               type="time"
               id="time-picker"
               step={60}
-              defaultValue="10:30:00"
               className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
             />
             {errors.startTime && (
@@ -281,10 +283,10 @@ const CreateEventModal: React.FC<CreateEventModalProps> = ({
                 console.log(e.target.value);
                 setFormData({ ...formData, endTime: e.target.value });
               }}
+              value={formData.endTime}
               type="time"
               id="time-picker"
               step={60}
-              defaultValue="10:30:00"
               className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
             />
             {errors.startTime && (

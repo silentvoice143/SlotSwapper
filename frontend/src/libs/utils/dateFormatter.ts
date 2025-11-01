@@ -55,3 +55,11 @@ export const formatTime = (date: string | number | Date): string => {
 
   return d.toLocaleDateString();
 };
+
+export const getRoundedTime = (offsetMinutes = 0) => {
+  const now = new Date();
+  now.setMinutes(Math.ceil(now.getMinutes() / 30) * 30 + offsetMinutes, 0, 0);
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+};
