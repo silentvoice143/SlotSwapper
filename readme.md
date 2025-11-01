@@ -108,7 +108,7 @@ However, I plan to continue improving this project with:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/slotswapper.git
+git clone https://github.com/silentvoice143/SlotSwapper.git
 cd slotswapper
 ```
 
