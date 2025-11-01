@@ -7,7 +7,7 @@ This project is built with a TypeScript-based backend and a React frontend, focu
 
 🔗 **[SlotSwapper Live](https://slotswapper-pvr4.onrender.com)**
 
-📖 **[API Documentation](https://slotswapper-pvr4.onrender.com/api-doc)**
+📖 **[API Documentation](https://slotswapper-pvr4.onrender.com/api-docs)**
 
 ## 🛠️ Tech Stack
 
