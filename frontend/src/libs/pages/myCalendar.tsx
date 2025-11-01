@@ -54,6 +54,7 @@ function MyCalendar() {
       const data = await postEvent(event);
       if (data.success) {
         toast.success("Event created successfully");
+        setEvents([...events, data.data]);
       }
     } catch (err) {
     } finally {
