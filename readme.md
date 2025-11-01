@@ -58,7 +58,7 @@ While developing the swap logic, I explored multiple edge cases:
 
 ## 📚 API Documentation
 
-For detailed API documentation, visit: **[API Docs](https://slotswapper-pvr4.onrender.com/api-doc)**
+For detailed API documentation, visit: **[API Docs](https://slotswapper-backend-ol2r.onrender.com/api-docs)**
 
 ### 🗓️ Event Routes
 
